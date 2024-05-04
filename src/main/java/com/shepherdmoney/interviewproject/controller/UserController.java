@@ -16,30 +16,17 @@ public class UserController {
 
     @PutMapping("/user")
     public ResponseEntity<Integer> createUser(@RequestBody CreateUserPayload payload) {
-        // TODO: Create an user entity with information given in the payload, store it
-        // in the database
-        // and return the id of the user in 200 OK response
-        String name = payload.getName();
-        String email = payload.getEmail();
-
-        if (name.isEmpty() || email.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+        // CREATE USER AND RETURN ID
         User user = new User();
-        user.setName(name);
-        user.setEmail(email);
+        user.setName(payload.getName());
+        user.setEmail(payload.getEmail());
         userRepository.saveAndFlush(user);
-
         return new ResponseEntity<>(user.getId(), HttpStatus.OK);
     }
 
     @DeleteMapping("/user")
     public ResponseEntity<String> deleteUser(@RequestParam int userId) {
-        // TODO: Return 200 OK if a user with the given ID exists, and the deletion is
-        // successful
-        // Return 400 Bad Request if a user with the ID does not exist
-        // The response body could be anything you consider appropriate
+        // DELETE USER
         if (userRepository.existsById(userId)) {
             userRepository.deleteById(userId);
             return new ResponseEntity<>(String.format("OKAY: %s deleted", userId), HttpStatus.OK);
