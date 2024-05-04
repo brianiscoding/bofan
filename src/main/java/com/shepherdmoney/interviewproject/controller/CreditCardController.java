@@ -4,7 +4,6 @@ import com.shepherdmoney.interviewproject.repository.CreditCardRepository;
 import com.shepherdmoney.interviewproject.repository.UserRepository;
 import com.shepherdmoney.interviewproject.repository.BalanceHistoryRepository;
 
-import com.shepherdmoney.interviewproject.vo.request.Foo;
 import com.shepherdmoney.interviewproject.vo.request.AddCreditCardToUserPayload;
 import com.shepherdmoney.interviewproject.vo.request.UpdateBalancePayload;
 import com.shepherdmoney.interviewproject.vo.response.CreditCardView;
@@ -54,14 +53,15 @@ public class CreditCardController {
 
     @GetMapping("/credit-card:all")
     public ResponseEntity<List<CreditCardView>> getAllCardOfUser(@RequestParam int userId) {
-        // CHECK IF USER EXISTS
-        if (!userRepository.existsById(userId)) {
+        // SEARCH USER
+        Optional<User> userData = userRepository.findById(userId);
+        if (!userData.isPresent()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // GET LIST OF CREDIT CARDS
         List<CreditCardView> creditCards = new ArrayList<>();
-        creditCardRepository.findByUserId(userId).forEach(creditCard -> {
+        userData.get().getCreditCards().forEach(creditCard -> {
             creditCards.add(new CreditCardView(creditCard.getIssuanceBank(), creditCard.getNumber()));
         });
         return new ResponseEntity<>(creditCards, HttpStatus.OK);
